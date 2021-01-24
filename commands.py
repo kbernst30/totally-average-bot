@@ -22,7 +22,9 @@ def register_commands(bot):
 
     @bot.command(name="video", help="Gets the URL of the latest YouTube video")
     async def send_latest_video(ctx):
+        logger.info(f'!video command received by {ctx.author}')
         if bot.youtube_api_key is None:
+            logger.warn("Cannot attempt YouTube API request... perhaps API key is missing...")
             await ctx.send("Uh-oh... Looks like I can't get the latest YouTube post. Try again later.")
             return
 
@@ -42,11 +44,12 @@ def register_commands(bot):
             await ctx.send(embed=embed)
 
         else:
+            # TODO test this once YouTube video is live
             await ctx.send("Need a video here")
 
     @bot.command(name="podcast", help="Gets the public URL of the Totally Average Gamers podcast")
     async def send_podcast(ctx):
-        logger.info(bot.user.avatar_url)
+        logger.info(f'!podcast command received by {ctx.author}')
         embed = discord.Embed(
             title="The Totally Average Gamers Podcast",
             url=PODCAST_URL,

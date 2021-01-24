@@ -26,7 +26,22 @@ class TotallyAverageBot(commands.Bot):
 
     async def on_member_join(self, member):
         logger.info(f'{member.name} joined!')
-        await member.create_dm()
-        await member.dm_channel.send(
-            f'Hi {member.name}, welcome to my Discord server!'
+
+        welcome_channel_id = "711984249095586358"
+        message = f'**Welcome {member.name}!** We are so excited that you have joined our ' + \
+            'community. Our Totally Average Mods and Team are here to answer any questions you ' + \
+            'might have and to keep this place safe and respectful. Use !help in any channel to ' + \
+            'see how Totally Average Bot can assist you. \n\nPlease take a moment to read over ' + \
+            'the rules in <#' + welcome_channel_id + '> and react to get access to the community and then feel ' + \
+            'free to introduce yourself and join in the conversation!\n\n Thank you, \nThe Totally Average Gamers Team'
+
+        embed = discord.Embed(
+            title="Welcome to the Totally Average Gamers",
+            description=message,
+            color=0x36457A
         )
+
+        embed.set_author(name="Totally Average Gamers", icon_url=self.user.avatar_url)
+
+        await member.create_dm()
+        await member.dm_channel.send(embed=embed)
