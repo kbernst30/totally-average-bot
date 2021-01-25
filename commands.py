@@ -3,6 +3,8 @@ import discord
 import logging
 import os
 
+from bot import TotallyAverageBot
+from discord.ext import commands
 from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
@@ -17,11 +19,11 @@ PODCAST_IMG_URL = "https://s3-us-west-2.amazonaws.com/anchor-generated-image-ban
     "podcast_uploaded_nologo400/11978152/11978152-1610747060322-634d739912be4.jpg"
 
 
-def register_commands(bot):
+def register_commands(bot: TotallyAverageBot):
     load_dotenv()
 
     @bot.command(name="video", help="Gets the URL of the latest YouTube video")
-    async def send_latest_video(ctx):
+    async def send_latest_video(ctx: commands.Context):
         logger.info(f'!video command received by {ctx.author}')
         if bot.youtube_api_key is None:
             logger.warn("Cannot attempt YouTube API request... perhaps API key is missing...")
@@ -48,7 +50,7 @@ def register_commands(bot):
             await ctx.send("Need a video here")
 
     @bot.command(name="podcast", help="Gets the public URL of the Totally Average Gamers podcast")
-    async def send_podcast(ctx):
+    async def send_podcast(ctx: commands.Context):
         logger.info(f'!podcast command received by {ctx.author}')
         embed = discord.Embed(
             title="The Totally Average Gamers Podcast",

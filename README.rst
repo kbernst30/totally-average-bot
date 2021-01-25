@@ -18,6 +18,13 @@ To install dependencies for the project:
 
     pipenv install
 
+This will install dependencies into a virtual environment manage by ``pipenv``. All other
+commands should be run from this environment, which can be accessed with:
+
+.. code-block:: bash
+
+    pipenv shell
+
 
 Quick Start
 ===========
@@ -30,6 +37,12 @@ needed to connect to a server. For example:
 
 Discord tokens can be found in the developer portal on https://discord.com. Follow instructions on
 Discord developer portal to allow the bot to join a server.
+
+To run the bot after it's connected to a server:
+
+.. code-block:: bash
+
+    python main.py
 
 
 Linting

@@ -19,12 +19,12 @@ class TotallyAverageBot(commands.Bot):
 
         self.youtube_api_key = kwargs.get(YOUTUBE_API_KEY) if YOUTUBE_API_KEY in kwargs else None
 
-        super().__init__(intents=intents, command_prefix='!')
+        super().__init__(intents=intents, command_prefix='!')  # type: ignore
 
     async def on_ready(self):
         logger.info(f'{self.user} has connected to Discord!')
 
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: discord.Member):
         logger.info(f'{member.name} joined!')
 
         welcome_channel_id = "711984249095586358"
