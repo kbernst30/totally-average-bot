@@ -1,4 +1,5 @@
 import aiohttp
+import constants
 import discord
 import logging
 import os
@@ -9,15 +10,6 @@ from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 
-YOUTUBE_LATEST_REQUEST_URI = (
-    "https://www.googleapis.com/youtube/v3/search?key=%s&part=snippet&channelId=%s&order=date&type=video"
-)
-
-EMBED_COLOR = 0x36457A
-PODCAST_URL = "https://anchor.fm/totally-average-gamers"
-PODCAST_IMG_URL = "https://s3-us-west-2.amazonaws.com/anchor-generated-image-bank/production/" + \
-    "podcast_uploaded_nologo400/11978152/11978152-1610747060322-634d739912be4.jpg"
-
 
 def register_commands(bot: TotallyAverageBot):
     load_dotenv()
@@ -27,10 +19,11 @@ def register_commands(bot: TotallyAverageBot):
         logger.info(f'!video command received by {ctx.author}')
         if bot.youtube_api_key is None:
             logger.warn("Cannot attempt YouTube API request... perhaps API key is missing...")
-            await ctx.send("Uh-oh... Looks like I can't get the latest YouTube post. Try again later.")
+            await ctx.send(constants.YOUTUBE_ERROR_MSG)
             return
 
-        youtube_request_uri = YOUTUBE_LATEST_REQUEST_URI % (bot.youtube_api_key, os.getenv('YOUTUBE_CHANNEL_ID'))
+        youtube_channel_id = os.getenv(constants.ENV_YOUTUBE_CHANNEL_ID)
+        youtube_request_uri = constants.YOUTUBE_LATEST_REQUEST_URI % (bot.youtube_api_key, youtube_channel_id)
 
         async with aiohttp.ClientSession() as session:
             async with session.get(youtube_request_uri) as response:
@@ -39,29 +32,50 @@ def register_commands(bot: TotallyAverageBot):
 
         if len(latest_youtube_videos) == 0:
             embed = discord.Embed(
-                description="I can't seem to find any recent videos on YouTube... how average :neutral_face:",
-                color=EMBED_COLOR
+                description=constants.YOUTUBE_NO_VID_MSG,
+                color=constants.EMBED_COLOR
             )
 
             await ctx.send(embed=embed)
 
         else:
-            # TODO test this once YouTube video is live
-            await ctx.send("Need a video here")
+            # First video in list is latest based on YouTube documentation
+            latest_video = latest_youtube_videos[0]
+
+            # ID is an object that looks like this: {'kind': 'youtube#video', 'videoId': 'k--qYwSMWDQ'}
+            video_id = latest_video['id']['videoId']
+            video_snippet = latest_video['snippet']
+            video_title = video_snippet['title']
+            video_description = video_snippet['description']
+
+            # TODO Check if High exists? or if should use default?
+            video_thumbnail = video_snippet['thumbnails']['high']['url']
+
+            embed = discord.Embed(
+                title=video_title,
+                url='https://youtube.com/watch?v=%s' % video_id,
+                description=video_description,
+                color=constants.EMBED_COLOR
+            )
+
+            embed.set_image(url=video_thumbnail)
+            embed.set_author(name="Totally Average Gamers", icon_url=bot.user.avatar_url)
+
+            await ctx.send(constants.YOUTUBE_MSG, embed=embed)
 
     @bot.command(name="podcast", help="Gets the public URL of the Totally Average Gamers podcast")
     async def send_podcast(ctx: commands.Context):
         logger.info(f'!podcast command received by {ctx.author}')
         embed = discord.Embed(
             title="The Totally Average Gamers Podcast",
-            url=PODCAST_URL,
-            color=EMBED_COLOR
+            url=constants.PODCAST_URL,
+            color=constants.EMBED_COLOR
         )
 
-        embed.set_image(url=PODCAST_IMG_URL)
+        embed.set_image(url=constants.PODCAST_IMG_URL)
         embed.set_author(name="Totally Average Gamers", icon_url=bot.user.avatar_url)
 
         await ctx.send(
-            "Check out the latest episodes of the Totally Average Gamers podcast!",
+            constants.PODCAST_MSG,
             embed=embed
         )
