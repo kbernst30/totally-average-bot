@@ -25,5 +25,13 @@ PODCAST_MSG = 'Check out the latest episodes of the Totally Average Gamers podca
 EMBED_COLOR = 0x36457A
 
 CHANNEL_INFO = {
-    'general': 'This is a test',
+    'general': '```This channel is for all general conversation. Everyone is welcome to talk in ' +
+               'in here. No topics necessary!```',
+
+    'news': '```This channel is for gaming related news. Feel free to post links to articles, tweets, '
+            'or other posts and everyone is welcome to discuss.```',
+
+    'podcast-discussion': '```This channel is for everyone to discuss the Totally Average Gamers podcast! ' +
+                          'We welcome all feedback and suggestions for the podcast. Or anyone just willing ' +
+                          'to chat about recent episodes.```'
 }

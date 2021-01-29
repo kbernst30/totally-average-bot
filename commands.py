@@ -79,3 +79,9 @@ def register_commands(bot: TotallyAverageBot):
             constants.PODCAST_MSG,
             embed=embed
         )
+
+    @bot.command(name="info", help="Provides info about the current channel")
+    async def send_info(ctx: commands.Context):
+        channel = ctx.message.channel
+        if channel.name in constants.CHANNEL_INFO:
+            await ctx.send(constants.CHANNEL_INFO[channel.name])
